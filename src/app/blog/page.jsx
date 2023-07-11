@@ -1,27 +1,41 @@
+'use client';
 import React from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import useSWR, { mutate } from 'swr';
 // import Error from 'next/error';
 
-async function getData() {
-  const res = await fetch('http://localhost:3000/api/posts', {
-    method: 'GET',
-    cache: 'no-store',
-  });
+// async function getData() {
+//   const res = await fetch('/api/posts', {
+//     method: 'GET',
+//     cache: 'no-store',
+//   });
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data');
-  }
+//   if (!res.ok) {
+//     throw new Error('Failed to fetch data');
+//   }
 
-  return res.json();
-}
+//   return res.json();
+// }
 
-const Blog = async () => {
-  const data = await getData();
+const Blog = () => {
+  const router1 = useRouter;
+  console.log(router1);
+  // let hostname = location.hostname;
+  // console.log(hostname);
+  // const url = window.location;
+  // console.log(url);
+
+  const fetcher = (...args) => fetch(...args).then((res) => res.json());
+  const { data, error, isLoading } = useSWR('/api/posts', fetcher);
+  console.log(data);
+
+  // const data = getData();
   return (
     <div className={styles.mainContainer}>
-      {data.map((item) => (
+      {data?.map((item) => (
         <Link
           href={`/blog/${item._id}`}
           className={styles.container}
